@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Conway's Game of Life</title>
+    <style>
+        html, body {
+            height: 100%;
+            background-color: #F5F5F5;
+        }
+        #ins {
+            margin: 2em;
+            display: flex;
+
+            /* This centers our sketch horizontally. */
+            justify-content: center;
+
+            /* This centers our sketch vertically. */
+            align-items: center;
+            flex-basis: 100%;
+        }
+        #canvas-cont {
+            display: flex;
+
+            /* This centers our sketch horizontally. */
+            justify-content: center;
+
+            /* This centers our sketch vertically. */
+            align-items: center;
+        }
+    </style>
+    <script src="p5.js"></script>
+</head>
+<body>
+<div id="ins">
+    <div>
+        <label for="grid-x" >X</label>
+        <input id="grid-x" type="number" value="8">
+    </div>
+    <div>
+        <label for="grid-y" >Y</label>
+        <input id="grid-y" type="number" value="8"/>
+    </div>
+    <div>
+        <label for="refresh-delay" >Refresh delay (ms)</label>
+        <input id="refresh-delay" type="number" value="1000"/>
+    </div>
+    <div>
+        <label for="show-coords" >Show coords</label>
+        <input id="show-coords" type="checkbox" />
+    </div>
+</div>
+<div id="canvas-cont">
+</div>
+<script src="sketch.js"></script>
+</body>
+</html>
