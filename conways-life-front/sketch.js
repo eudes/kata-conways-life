@@ -5,8 +5,8 @@ const server = {
             method: 'GET',
             mode: 'cors',
         })
-        let json = res.json()
-        console.log(json)
+        let json = await res.json()
+        // console.log("init", json)
         return json
     },
     next: async function next(grid) {
@@ -17,8 +17,8 @@ const server = {
             },
             mode: 'cors',
         })
-        let json = res.json()
-        console.log(json)
+        let json = await res.json()
+        // console.log("next", json)
         return json
     }
 }
@@ -39,12 +39,12 @@ let sketch = function (p) {
     let defaultFillColor = "#84b16b"
     let white = "#F5F5F5"
 
-    let gridState;
+    let gridState = [[true]];
 
     p.setup = async function () {
         canvas = p.createCanvas(400, 400)
         canvas.parent(domCont)
-        gridState = await initState(gridX, gridY)
+        await initState()
     }
 
     p.draw = async function () {
@@ -55,7 +55,7 @@ let sketch = function (p) {
 
         // reset grid if size changed
         if(oldGridX !== gridX || oldGridY !== gridY){
-            await initState(gridX, gridY)
+            await initState()
         }
 
         let delay = parseInt(domDelay.value)
@@ -67,14 +67,16 @@ let sketch = function (p) {
         }
 
         // use the longest axis to calc square side length
-        let squareSide = gridX > gridY ? canvas.width / gridX : canvas.width / gridY
+        let actualXlen = gridState.length
+        let actualYlen = gridState[0].length
+        let squareSide = actualXlen > actualYlen ? canvas.width / actualXlen : canvas.width / actualYlen
 
         // Draw
         p.background(white)
         p.stroke(defaultStrokeColor);
         drawState(gridState, squareSide, showCoords)
 
-        gridState = await updateState(gridState)
+        await updateState(gridState)
     }
 
     function drawState(state, squareSide, showCoords) {
@@ -98,12 +100,12 @@ let sketch = function (p) {
         }
     }
 
-    async function initState(gridX, gridY) {
-        return server.init(gridX, gridY)
+    async function initState() {
+        gridState = (await server.init(gridX, gridY)).grid
     }
 
     async function updateState(gridState) {
-        return server.next(gridState)
+        gridState = (await server.next(gridState)).grid
     }
 
     async function randomArray2d(x, y) {
