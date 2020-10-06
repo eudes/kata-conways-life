@@ -1,7 +1,7 @@
 const server = {
     url: 'http://localhost:8080',
     random: async function random(x, y) {
-        let res = await fetch(`${this.url}/random?x=${x}&y=${y}`, {
+        let res = await fetch(`${this.url}/test/random?x=${x}&y=${y}`, {
             method: 'GET',
             mode: 'cors',
         })
@@ -10,7 +10,7 @@ const server = {
         return json
     },
     next: async function next(grid) {
-        let res = await fetch(`${this.url}/next`, {
+        let res = await fetch(`${this.url}/test/next`, {
             method: 'POST',
             body: JSON.stringify({
                 "grid": grid
@@ -25,7 +25,7 @@ const server = {
         return json
     },
     glider: async function glider() {
-        let res = await fetch(`${this.url}/glider`, {
+        let res = await fetch(`${this.url}/test/glider`, {
             method: 'GET',
             mode: 'cors',
         })

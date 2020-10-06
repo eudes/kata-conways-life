@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-public class GridController {
+@RequestMapping("test")
+public class TestGridController {
 
     @CrossOrigin
-    @GetMapping("/glider")
+    @GetMapping("glider")
     public String glider() {
         log.info("glider");
         return "{\"grid\": [" +
@@ -27,7 +28,7 @@ public class GridController {
     }
 
     @CrossOrigin
-    @GetMapping("/random")
+    @GetMapping("random")
     public String random(int x, int y) throws JSONException {
         log.info("init {}, {}", x, y);
         JSONArray rows = new JSONArray();
@@ -44,7 +45,7 @@ public class GridController {
     }
 
     @CrossOrigin
-    @PostMapping(value = "/next")
+    @PostMapping(value = "next")
     public String next(@RequestBody String grid) {
         log.info("next {}", grid);
         return grid;
