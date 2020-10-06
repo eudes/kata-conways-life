@@ -1,7 +1,7 @@
 const server = {
     url: 'http://localhost:8080',
-    init: async function init(x, y) {
-        let res = await fetch(`${this.url}/init?x=${x}&y=${y}`, {
+    random: async function random(x, y) {
+        let res = await fetch(`${this.url}/random?x=${x}&y=${y}`, {
             method: 'GET',
             mode: 'cors',
         })
@@ -12,15 +12,27 @@ const server = {
     next: async function next(grid) {
         let res = await fetch(`${this.url}/next`, {
             method: 'POST',
-            body: {
+            body: JSON.stringify({
                 "grid": grid
+            }),
+            headers: {
+                "Content-Type": "application/json"
             },
             mode: 'cors',
         })
         let json = await res.json()
         // console.log("next", json)
         return json
-    }
+    },
+    glider: async function glider() {
+        let res = await fetch(`${this.url}/glider`, {
+            method: 'GET',
+            mode: 'cors',
+        })
+        let json = await res.json()
+        // console.log("init", json)
+        return json
+    },
 }
 
 let sketch = function (p) {
@@ -29,33 +41,40 @@ let sketch = function (p) {
     const domGridY = document.getElementById('grid-y')
     const domDelay = document.getElementById('refresh-delay')
     const domShowCoords = document.getElementById('show-coords')
+    const domInitFn = document.getElementById('init-fn')
 
     let canvas
-    let gridX = parseInt(domGridX.value)
-    let gridY = parseInt(domGridY.value)
+    let gridRows = parseInt(domGridX.value)
+    let gridCols = parseInt(domGridY.value)
+    let initFn = domInitFn.value
 
     let contrast = "#ac3939"
     let defaultStrokeColor = "#d9d9d9"
     let defaultFillColor = "#84b16b"
     let white = "#F5F5F5"
 
-    let gridState = [[true]];
+    let gridState = [[]]
 
     p.setup = async function () {
         canvas = p.createCanvas(400, 400)
         canvas.parent(domCont)
-        await initState()
+        gridState = await initState(gridRows, gridCols, initFn)
     }
 
     p.draw = async function () {
-        let oldGridX = gridX
-        let oldGridY = gridY
-        gridX = parseInt(domGridX.value)
-        gridY = parseInt(domGridY.value)
+        let oldGridRows = gridRows
+        let oldGridCols = gridCols
+        let oldInitFn = initFn
+        gridRows = parseInt(domGridX.value)
+        gridCols = parseInt(domGridY.value)
+        initFn = domInitFn.options[domInitFn.selectedIndex].value
+
 
         // reset grid if size changed
-        if(oldGridX !== gridX || oldGridY !== gridY){
-            await initState()
+        if (oldGridRows !== gridRows || oldGridCols !== gridCols || oldInitFn !== initFn) {
+            gridState = await initState(gridRows, gridCols, initFn)
+        } else {
+            gridState = await updateState(gridState)
         }
 
         let delay = parseInt(domDelay.value)
@@ -73,45 +92,44 @@ let sketch = function (p) {
 
         // Draw
         p.background(white)
-        p.stroke(defaultStrokeColor);
+        p.stroke(defaultStrokeColor)
         drawState(gridState, squareSide, showCoords)
-
-        await updateState(gridState)
     }
 
-    function drawState(state, squareSide, showCoords) {
-        for (let x = 0; x < state.length; x++) {
-            for (let y = 0; y < state[x].length; y++) {
-                let alive = state[x][y]
+    function drawState(rows, squareSide, showCoords) {
+        for (let row = 0; row < rows.length; row++) {
+            for (let col = 0; col < rows[row].length; col++) {
+                let alive = rows[row][col]
                 alive ? p.fill(defaultFillColor) : p.fill(white)
-                let xPos = x * squareSide
-                let yPos = y * squareSide
-                p.square(xPos, yPos, squareSide)
+                let rowPos = row * squareSide
+                let colPos = col * squareSide
+                p.square(colPos, rowPos, squareSide)
                 if (showCoords) {
-                    p.textSize(12);
+                    p.textSize(12)
                     p.fill(contrast)
                     p.stroke(contrast)
-                    xPos = xPos + (squareSide / 2)
-                    yPos = yPos + (squareSide / 2)
-                    p.text(`${x},${y}`, xPos, yPos);
-                    p.stroke(defaultStrokeColor);
+                    rowPos = rowPos + (squareSide / 2)
+                    colPos = colPos + (squareSide / 2)
+                    p.text(`${col},${row}`, colPos, rowPos)
+                    p.stroke(defaultStrokeColor)
                 }
             }
         }
     }
 
-    async function initState() {
-        gridState = (await server.init(gridX, gridY)).grid
+    async function initState(gridX, gridY, serverFn) {
+        console.log(`init with ${serverFn}`)
+        return (await server[serverFn](gridX, gridY)).grid
     }
 
-    async function updateState(gridState) {
-        gridState = (await server.next(gridState)).grid
+    async function updateState(state) {
+        return (await server.next(state)).grid
     }
 
     async function randomArray2d(x, y) {
         return new Array(x).fill([]).map(() =>
             new Array(y).fill(0).map(() => Math.round(Math.random()))
-        );
+        )
     }
 }
 

@@ -32,20 +32,27 @@
 <body>
 <div id="ins">
     <div>
-        <label for="grid-x" >X</label>
+        <label for="grid-x">Rows</label>
         <input id="grid-x" type="number" value="8">
     </div>
     <div>
-        <label for="grid-y" >Y</label>
+        <label for="grid-y">Cols</label>
         <input id="grid-y" type="number" value="8"/>
     </div>
     <div>
-        <label for="refresh-delay" >Refresh delay (ms)</label>
-        <input id="refresh-delay" type="number" value="10000"/>
+        <label for="refresh-delay">Refresh delay (ms)</label>
+        <input id="refresh-delay" type="number" value="1000"/>
     </div>
     <div>
-        <label for="show-coords" >Show coords</label>
-        <input id="show-coords" type="checkbox" />
+        <label for="show-coords">Show coords</label>
+        <input id="show-coords" type="checkbox"/>
+    </div>
+    <div>
+        <label for="init-fn">Init function</label>
+        <select id="init-fn">
+            <option>random</option>
+            <option>glider</option>
+        </select>
     </div>
 </div>
 <div id="canvas-cont">
