@@ -48,6 +48,15 @@ public class TestGridController {
     @PostMapping(value = "next")
     public String next(@RequestBody String grid) {
         log.info("next {}", grid);
-        return grid;
+
+        return GridService.next().toString();
+    }
+
+    class GridService {
+        public static Grid next(Grid grid) {
+            // logica
+
+            return (new Grid(grid));
+        }
     }
 }
