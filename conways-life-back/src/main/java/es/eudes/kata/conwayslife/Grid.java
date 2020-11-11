@@ -1,11 +1,12 @@
 package es.eudes.kata.conwayslife;
 
+import lombok.Builder;
+
+@Builder
 public class Grid {
-    public Grid(int sizeX, int sizeY, String seed) {
+    public Grid(Grid seed) {
 
     }
 
-    public Grid next() {
-        return true;
-    }
+
 }
