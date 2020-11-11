@@ -49,14 +49,7 @@ public class TestGridController {
     public String next(@RequestBody String grid) {
         log.info("next {}", grid);
 
-        return GridService.next().toString();
+        return null;
     }
 
-    class GridService {
-        public static Grid next(Grid grid) {
-            // logica
-
-            return (new Grid(grid));
-        }
-    }
 }
